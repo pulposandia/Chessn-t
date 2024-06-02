@@ -13,7 +13,7 @@ void printPossiblemoves(std::vector<sf::FloatRect>& coord, sf::Sprite& rombo, sf
 
 Helicopter checkIfMouseOnIt(std::vector<sf::FloatRect>& coord, sf::RenderWindow& window);
 
-void setThePossibleMoves(chessPiece& x);
+void setThePossibleMoves(chessPiece& x, bool isInTop);
 
 bool HasbeenClicked(chessPiece& piece, sf::RenderWindow& window);
 

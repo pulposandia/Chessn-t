@@ -43,6 +43,24 @@ int main()
     chessPiece peon7W(Pawn7, piesas, 1.f, white);
     chessPiece peon8W(Pawn8, piesas, 1.f, white);
 
+    //initizalize white pieces
+    chessPiece torreLB{ RookL, piesas, 7.f, black };
+    chessPiece caballoLB{ KnightL, piesas, 1.f, black };
+    chessPiece alfilLB{ BishopL, piesas, 7.f, black };
+    chessPiece reinaB{ Queen, piesas, 7.f, black };
+    chessPiece reyB{ King, piesas, 1.f, black };
+    chessPiece alfilRB{ BishopR, piesas, 7.f, black };
+    chessPiece caballoRB{ KnightR, piesas, 1.f, black };
+    chessPiece torreRB{ RookR, piesas, 7.f, black };
+    chessPiece peon1B(Pawn1, piesas, 1.f, black);
+    chessPiece peon2B(Pawn2, piesas, 1.f, black);
+    chessPiece peon3B(Pawn3, piesas, 1.f, black);
+    chessPiece peon4B(Pawn4, piesas, 1.f, black);
+    chessPiece peon5B(Pawn5, piesas, 1.f, black);
+    chessPiece peon6B(Pawn6, piesas, 1.f, black);
+    chessPiece peon7B(Pawn7, piesas, 1.f, black);
+    chessPiece peon8B(Pawn8, piesas, 1.f, black);
+
 
 
     //uses std::vector as a stack to hold the coordinates of possible moves of giving piece.
@@ -51,18 +69,26 @@ int main()
     //makes an vector with all the pieces pointers
     std::vector<chessPiece*> whitePieces{ &torreLW, &caballoLW, &alfilLW, &reinaW, &reyW, &alfilRW, &caballoRW, &torreRW, &peon1W, &peon2W, &peon3W, &peon4W, &peon5W, &peon6W, &peon7W, &peon8W};
     initializeWhitePieces(whitePieces);
-    setWhiteInitialPosition(whitePieces);
+    setBottomInitialPosition(whitePieces);
 
+    //makes an vector with all black pieces
+    std::vector<chessPiece*> blackPieces{ &torreLB, &caballoLB, &alfilLB, &reinaB, &reyB, &alfilRB, &caballoRB, &torreRB, &peon1B, &peon2B, &peon3B, &peon4B, &peon5B, &peon6B, &peon7B, &peon8B };
+    initializeBlackPieces(blackPieces);
+    setTopInitialPosition(blackPieces);
 
-    std::vector<chessPiece*> allPieces = whitePieces;
-    /*allPieces.reserve(whitePieces.size());
-    allPieces.insert(allPieces.end(), )*/
+    //connate both pieces' vectors
+    std::vector<chessPiece*> allPieces{};
+    allPieces.reserve(whitePieces.size() + blackPieces.size());
+    allPieces.insert(allPieces.end(), whitePieces.begin(), whitePieces.end());
+    allPieces.insert(allPieces.end(), blackPieces.begin(), blackPieces.end());
  
 
     int counter{};
     bool isShowingMoves{ false };
     piece type{};
     coloring color{};
+
+    displaySelectScreen(window); //displays a select screen to choose color 
 
     while (window.isOpen())
     {

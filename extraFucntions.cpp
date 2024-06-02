@@ -28,7 +28,7 @@ Helicopter checkIfMouseOnIt(std::vector<sf::FloatRect>& coord, sf::RenderWindow&
 	return { false, 0 };
 }
 
-void setThePossibleMoves(chessPiece& x)
+void setThePossibleMoves(chessPiece& x, bool isInTop)
 {
 	//sets all possible moves
 
@@ -76,9 +76,19 @@ void setThePossibleMoves(chessPiece& x)
 		return;
 	//assuming only valid chess pieces are send to this function the pawn are set next:
 	default:
-		x.getMovesVector().push_back(down);
-		x.getMovesVector().push_back(diagonal4);
-		x.getMovesVector().push_back(diagonal3);
+		if (!isInTop)
+		{
+			x.getMovesVector().push_back(down);
+			x.getMovesVector().push_back(diagonal4);
+			x.getMovesVector().push_back(diagonal3);
+		}
+		if (isInTop)
+		{
+			x.getMovesVector().push_back(up);
+			x.getMovesVector().push_back(diagonal1);
+			x.getMovesVector().push_back(diagonal2);
+		}
+
 		return;
 	}
 }
@@ -98,9 +108,27 @@ void displaySelectScreen(sf::RenderWindow& window)
 	sf::Sprite button;
 	button.setTexture(playButton);
 
+
+
 	while (window.isOpen())
 	{
-		break;
+
+		sf::Event event;
+		while (window.pollEvent(event))
+		{
+			if (event.type == sf::Event::Closed)
+				window.close();
+
+			if ((event.type == sf::Event::MouseButtonPressed) && (event.mouseButton.button == sf::Mouse::Left))
+			{
+				if (button.getGlobalBounds().contains(static_cast<sf::Vector2f>(sf::Mouse::getPosition(window))))
+					return;
+			}
+		}
+
+
+		window.draw(button);
+		window.display();
 	}
 
 
