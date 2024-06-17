@@ -111,6 +111,7 @@ int main()
                     //this part checks if users clikced in piece and then moves the piece
                     Helicopter isRomboCliked{ checkIfMouseOnIt(possibleMoves, window) };
                     if (isRomboCliked.booleant)
+
                     {
                         std::cout << "awebo\n";
                         sf::Vector2f newPosition{ possibleMoves[isRomboCliked.index].getPosition() };
@@ -127,7 +128,7 @@ int main()
 
                     isShowingMoves = false;
                 }
-                // if not currently showing moves check what piece has been cliked and change variables so next frame the pieces moves will be shown
+                // if not currently showing moves check what piece has been cliked and change variables so next frame the piece's moves will be shown
                 else
                     for (size_t i = 0; i < allPieces.size(); i++)
                     {

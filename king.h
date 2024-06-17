@@ -39,6 +39,12 @@ struct Helicopter
 	size_t index{};
 };
 
+struct protectingKing
+{
+	bool booleant{};
+	sf::Vector2f direction{};
+};
+
 class chessPiece
 {
 public:
@@ -82,6 +88,7 @@ private:
 	Helicopter isOnAnotherPiece(std::vector<chessPiece*>& pieces, sf::Vector2f& move);
 	void firstMovePawn(std::vector<sf::FloatRect>& thePosibleMoves, std::vector<chessPiece*>& pieces);
 	void addPawnEatings(std::vector<sf::FloatRect>& thePosibleMoves, std::vector<chessPiece*>& pieces);
+	protectingKing& protectingKingFrom(std::vector<chessPiece*>& pieces);
 	void setCapture(bool x) { m_isCaptured = x; }
 };
 
