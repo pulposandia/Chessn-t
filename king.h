@@ -89,6 +89,8 @@ private:
 	void firstMovePawn(std::vector<sf::FloatRect>& thePosibleMoves, std::vector<chessPiece*>& pieces);
 	void addPawnEatings(std::vector<sf::FloatRect>& thePosibleMoves, std::vector<chessPiece*>& pieces);
 	protectingKing& protectingKingFrom(std::vector<chessPiece*>& pieces);
+	bool isAnyPieceOnTheWay(sf::Vector2f& direction, std::vector<chessPiece*>& pieces, bool isIgnoringKing = false);
+	bool isDangerOnTheWay(sf::Vector2f& dangersDirection, std::vector<chessPiece*>& pieces);
 	void setCapture(bool x) { m_isCaptured = x; }
 };
 

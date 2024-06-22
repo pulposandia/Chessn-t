@@ -73,6 +73,57 @@ void chessPiece::addPawnEatings(std::vector<sf::FloatRect>& thePosibleMoves, std
 	}
 }
 
+bool chessPiece::isAnyPieceOnTheWay(sf::Vector2f& direction, std::vector<chessPiece*>& pieces, bool isIgnoringKing)
+{
+	sf::Vector2f nextSquare{};
+	//loops until it finds any piece but a king in the way and returns true
+	for (float i = 1; i < 8; i++)
+	{
+		nextSquare = (direction * 100.f * i) + m_position;
+		if (nextSquare.y >= 800 || nextSquare.x >= 800 || nextSquare.y < 0 || nextSquare.x < 0) // if square is outside board break the loop
+			break;
+		Helicopter variable{ isOnAnotherPiece(pieces, nextSquare) };
+		if (!variable.booleant) // no piece in square? Loop again
+			continue;
+		//if there is another piece that is protecting the king then allow this* piece to move freely
+		if (variable.booleant && (pieces[variable.index]->getPieceType() != King)) //the "is king" check might be dropped later
+			return true;
+		//if this function is used in context of moving a piece that is protecting the king then stop the loop after encountering the king
+		if ((pieces[variable.index]->getPieceType() == King) && !isIgnoringKing)
+			return false;
+	}
+
+	return false;
+}
+
+
+bool chessPiece::isDangerOnTheWay(sf::Vector2f& dangersDirection, std::vector<chessPiece*>& pieces)
+{
+	sf::Vector2f nextSquare{};
+	for (float i = 1; i < 8; i++)
+	{
+		nextSquare = (dangersDirection * 100.f * i) + m_position;
+		if (nextSquare.y >= 800 || nextSquare.x >= 800 || nextSquare.y < 0 || nextSquare.x < 0)
+			break;
+		Helicopter variable{ isOnAnotherPiece(pieces, nextSquare) };
+		//if there is no piece in the next squre from this* piece then move to the next square
+		if (!variable.booleant)
+			continue;
+		//if there is a piece and is oppositive color then cehck if its dangerous
+		if (variable.booleant && pieces[variable.index]->getColor() != m_color)
+		{//only rerturns true if a bishop is looking at the piece in a diagonal and if a rook is looking at the piece in a straight line
+			if (pieces[variable.index]->getPieceType() == Queen)
+				return true;
+			else if ((abs(dangersDirection.x) + abs(dangersDirection.y)) == 2.f && (pieces[variable.index]->getPieceType() == BishopL || pieces[variable.index]->getPieceType() == BishopR))
+				return true;
+			else if ((abs(dangersDirection.x) + abs(dangersDirection.y)) == 1.f && (pieces[variable.index]->getPieceType() == RookL || pieces[variable.index]->getPieceType() == RookR))
+				return true;
+		}
+		//if a same color piece is found then return a fail state
+		else
+			return false;
+	}
+}
 
 protectingKing& chessPiece::protectingKingFrom(std::vector<chessPiece*>& pieces)
 {
@@ -106,52 +157,19 @@ protectingKing& chessPiece::protectingKingFrom(std::vector<chessPiece*>& pieces)
 		sf::Vector2f nextSquare{};
 
 		//loop to check if the king is alredy protected with another piece
-		for (float i = 1; i < 8; i++)
-		{
-			nextSquare = (vectorPieceKing * 100.f * i) + m_position;
-			if (nextSquare.y >= 800 || nextSquare.x >= 800 || nextSquare.y < 0 || nextSquare.x < 0)
-				break;
-			Helicopter variable{ isOnAnotherPiece(pieces, nextSquare) };
-			if (!variable.booleant)
-				continue;
-			//if there is another piece that is protecting the king then allow this* piece to move freely
-			if (variable.booleant && (pieces[variable.index]->getPieceType() != King))
-				return failState;
-		}
+		if (isAnyPieceOnTheWay(vectorPieceKing, pieces))
+			return failState;
 
 		//this loop checks for the pieces after this* piece in the direction we found above
-		for (float i = 1; i < 8; i++)
-		{
-			nextSquare = (dangersDirection.direction * 100.f * i) + m_position;
-			if (nextSquare.y >= 800 || nextSquare.x >= 800 || nextSquare.y < 0 || nextSquare.x < 0)
-				break;
-			Helicopter variable{ isOnAnotherPiece(pieces, nextSquare) };
-			//if there is no piece in the next squre from this* piece then move to the next square
-			if (!variable.booleant)
-				continue;
-			//if there is a piece and is oppositive color then return the direction
-			if (variable.booleant && pieces[variable.index]->getColor() != m_color)
-			{//only forbids movement if a bishop is lookaing at the king in a diagonal and if a rook is looking at the king in a stright line
-				if (pieces[variable.index]->getPieceType() == Queen)
-					return dangersDirection;
-				else if ((abs(dangersDirection.direction.x) + abs(dangersDirection.direction.y)) == 2.f && (pieces[variable.index]->getPieceType() == BishopL || pieces[variable.index]->getPieceType() == BishopR))
-					return dangersDirection;
-				else if ((abs(dangersDirection.direction.x) + abs(dangersDirection.direction.y)) == 1.f && (pieces[variable.index]->getPieceType() == RookL || pieces[variable.index]->getPieceType() == RookR))
-					return dangersDirection;
-			}
-			//if a same color piece is found then return a fail state
-			else
-				return failState;
-		}
-	
+		if (isDangerOnTheWay(dangersDirection.direction, pieces))
+			return dangersDirection;
 	}
-	//std::cout << "x: " << m_position.x << " y: " << m_position.y << '\n';
-	//std::cout << "x: " << vectorPieceKing.x << " y: " << vectorPieceKing.y << '\n';
 	//if no piece of different color is found returna fail state
 	return failState;
 }
 
-//gets a vewctor from main and fills it up with the square of the possible moves of a piece according to its position
+
+//gets a vector from main and fills it up with the square of the possible moves of a piece according to its position
 void chessPiece::getAreasOfPMoves(std::vector<sf::FloatRect>& x, std::vector<chessPiece*>& pieces)
 {
 	x.clear();
