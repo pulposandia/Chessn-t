@@ -97,12 +97,12 @@ bool chessPiece::isAnyPieceOnTheWay(sf::Vector2f& direction, std::vector<chessPi
 }
 
 
-bool chessPiece::isDangerOnTheWay(sf::Vector2f& dangersDirection, std::vector<chessPiece*>& pieces)
+bool chessPiece::isDangerOnTheWay(sf::Vector2f& dangersDirection, std::vector<chessPiece*>& pieces, sf::Vector2f& initialPosition)
 {
 	sf::Vector2f nextSquare{};
 	for (float i = 1; i < 8; i++)
 	{
-		nextSquare = (dangersDirection * 100.f * i) + m_position;
+		nextSquare = (dangersDirection * 100.f * i) + initialPosition;
 		if (nextSquare.y >= 800 || nextSquare.x >= 800 || nextSquare.y < 0 || nextSquare.x < 0)
 			break;
 		Helicopter variable{ isOnAnotherPiece(pieces, nextSquare) };
@@ -118,6 +118,8 @@ bool chessPiece::isDangerOnTheWay(sf::Vector2f& dangersDirection, std::vector<ch
 				return true;
 			else if ((abs(dangersDirection.x) + abs(dangersDirection.y)) == 1.f && (pieces[variable.index]->getPieceType() == RookL || pieces[variable.index]->getPieceType() == RookR))
 				return true;
+			else
+				return false;
 		}
 		//if a same color piece is found then return a fail state
 		else
@@ -161,13 +163,27 @@ protectingKing& chessPiece::protectingKingFrom(std::vector<chessPiece*>& pieces)
 			return failState;
 
 		//this loop checks for the pieces after this* piece in the direction we found above
-		if (isDangerOnTheWay(dangersDirection.direction, pieces))
+		if (isDangerOnTheWay(dangersDirection.direction, pieces, m_position))
 			return dangersDirection;
 	}
 	//if no piece of different color is found returna fail state
 	return failState;
 }
 
+bool chessPiece::isMoveDangerous(sf::Vector2f& squareToCheck, std::vector<chessPiece*>& pieces)
+{
+	//this fucntion is only for the king pieces
+	if (m_type != King)
+		return false;
+
+	for (size_t i = 1; i < m_validMoves.size(); i++)
+	{
+		if (isDangerOnTheWay(m_validMoves[i], pieces, squareToCheck))
+			return true;
+	}
+
+	return false;
+}
 
 //gets a vector from main and fills it up with the square of the possible moves of a piece according to its position
 void chessPiece::getAreasOfPMoves(std::vector<sf::FloatRect>& x, std::vector<chessPiece*>& pieces)
@@ -187,6 +203,12 @@ void chessPiece::getAreasOfPMoves(std::vector<sf::FloatRect>& x, std::vector<che
 		for (float i{ 1.f }; i <= m_maxDistance; i++)
 		{
 			possibleMove = (m_validMoves[j] * 100.f * i) + m_position;
+			//if the piece is a king then check if the new move will put it in danger, if yes do not add the move to the vector of possible moves
+			if (m_type == King)
+			{
+				if (isMoveDangerous(possibleMove, pieces))
+					break;
+			}
 			//adds the square where the possible move is: (position coordinates, area of the square) 
 			// if the possible move lands outside the board it doesnt save it to the vector
 			if (!(possibleMove.y >= 800 || possibleMove.x >= 800 || possibleMove.y < 0 || possibleMove.x < 0))
