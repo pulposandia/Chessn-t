@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include <iostream>
 #include "extraFunctions.h"
 #include "Draw chess board.h"
 #include "king.h"
@@ -99,38 +100,5 @@ bool HasbeenClicked(chessPiece& piece, sf::RenderWindow& window)
 	return piece.getSquare().contains(static_cast<sf::Vector2f>(sf::Mouse::getPosition(window))) && !piece.hasBeenCapture();
 }
 
-//sets up the select screen
-void displaySelectScreen(sf::RenderWindow& window)
-{
-	sf::Texture playButton;
-	if (!playButton.loadFromFile("Play-Idle.png"))
-		static_assert(true && "it didnt work");
-	sf::Sprite button;
-	button.setTexture(playButton);
 
-
-
-	while (window.isOpen())
-	{
-
-		sf::Event event;
-		while (window.pollEvent(event))
-		{
-			if (event.type == sf::Event::Closed)
-				window.close();
-
-			if ((event.type == sf::Event::MouseButtonPressed) && (event.mouseButton.button == sf::Mouse::Left))
-			{
-				if (button.getGlobalBounds().contains(static_cast<sf::Vector2f>(sf::Mouse::getPosition(window))))
-					return;
-			}
-		}
-
-
-		window.draw(button);
-		window.display();
-	}
-
-
-}
 

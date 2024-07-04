@@ -6,6 +6,7 @@
 #include "extraFunctions.h"
 #include "pieceInitialization.h"
 #include "icon.h"
+#include "title screen.h"
 
 
 
@@ -61,20 +62,20 @@ int main()
     chessPiece peon7B(Pawn7, piesas, 1.f, black);
     chessPiece peon8B(Pawn8, piesas, 1.f, black);
 
-
+    bool whiteIsInTop{ false };
+    bool blackIsInTop{ false };
+    displayTitleScreen(window, whiteIsInTop, blackIsInTop); //displays a select screen to choose color 
 
     //uses std::vector as a stack to hold the coordinates of possible moves of giving piece.
     std::vector<sf::FloatRect> possibleMoves{};
     
     //makes an vector with all the pieces pointers
     std::vector<chessPiece*> whitePieces{ &torreLW, &caballoLW, &alfilLW, &reinaW, &reyW, &alfilRW, &caballoRW, &torreRW, &peon1W, &peon2W, &peon3W, &peon4W, &peon5W, &peon6W, &peon7W, &peon8W};
-    initializeWhitePieces(whitePieces);
-    setBottomInitialPosition(whitePieces);
+    initializeWhitePieces(whitePieces, whiteIsInTop);
 
     //makes an vector with all black pieces
     std::vector<chessPiece*> blackPieces{ &torreLB, &caballoLB, &alfilLB, &reinaB, &reyB, &alfilRB, &caballoRB, &torreRB, &peon1B, &peon2B, &peon3B, &peon4B, &peon5B, &peon6B, &peon7B, &peon8B };
-    initializeBlackPieces(blackPieces);
-    setTopInitialPosition(blackPieces);
+    initializeBlackPieces(blackPieces, blackIsInTop);
 
     //connate both pieces' vectors
     std::vector<chessPiece*> allPieces{};
@@ -88,7 +89,6 @@ int main()
     piece type{};
     coloring color{};
 
-    displaySelectScreen(window); //displays a select screen to choose color 
 
     while (window.isOpen())
     {
@@ -106,13 +106,9 @@ int main()
 
             if ((event.type == sf::Event::MouseButtonPressed) && (event.mouseButton.button == sf::Mouse::Left))
             {
-                if (isShowingMoves)
+                Helicopter isRomboCliked{ checkIfMouseOnIt(possibleMoves, window) }; //this has to be here for it to work correctly
+                if (isShowingMoves && isRomboCliked.booleant)
                 {
-                    //this part checks if users clikced in piece and then moves the piece
-                    Helicopter isRomboCliked{ checkIfMouseOnIt(possibleMoves, window) };
-                    if (isRomboCliked.booleant)
-
-                    {
                         std::cout << "awebo\n";
                         sf::Vector2f newPosition{ possibleMoves[isRomboCliked.index].getPosition() };
                         //loops thru all pieces and finds the piece the user clicked last and moves it
@@ -121,10 +117,9 @@ int main()
                             if (type == allPieces[i]->getPieceType() && color == allPieces[i]->getColor())
                             {
                                 allPieces[i]->setPosition(newPosition, allPieces);
+                                break;
                             }
                         }
-
-                    }
 
                     isShowingMoves = false;
                 }
@@ -139,7 +134,10 @@ int main()
                             type = allPieces[i]->getPieceType();
                             color = allPieces[i]->getColor();
                             isShowingMoves = true;
+                            break;
                         }
+                        else
+                            isShowingMoves = false;
                     }
             }
         }

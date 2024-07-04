@@ -140,6 +140,7 @@
     <ClCompile Include="Draw chess board.cpp" />
     <ClCompile Include="king.cpp" />
     <ClCompile Include="pieceInitialization.cpp" />
+    <ClCompile Include="title screen.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Draw chess board.h" />
@@ -147,6 +148,7 @@
     <ClInclude Include="icon.h" />
     <ClInclude Include="king.h" />
     <ClInclude Include="pieceInitialization.h" />
+    <ClInclude Include="title screen.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -17,8 +17,6 @@ void setThePossibleMoves(chessPiece& x, bool isInTop);
 
 bool HasbeenClicked(chessPiece& piece, sf::RenderWindow& window);
 
-void displaySelectScreen(sf::RenderWindow& window);
-
 
 
 #endif // !EXTRAFUCNTIONS_H

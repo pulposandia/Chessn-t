@@ -4,7 +4,7 @@
 #include "pieceInitialization.h"
 #include "extraFunctions.h"
 
-void initializeWhitePieces(std::vector<chessPiece*>& whitePieces)
+void initializeWhitePieces(std::vector<chessPiece*>& whitePieces, bool isWhiteOntop)
 {
     int xTexture{ 16 };
     int yTexture{ 0 };
@@ -46,9 +46,14 @@ void initializeWhitePieces(std::vector<chessPiece*>& whitePieces)
         }
         whitePieces[i]->getSprite().setScale(6.25, 6.25);
     }
+
+    if (isWhiteOntop)
+        setTopInitialPosition(whitePieces);
+    else
+        setBottomInitialPosition(whitePieces);
 }
 
-void initializeBlackPieces(std::vector<chessPiece*>& blackPieces)
+void initializeBlackPieces(std::vector<chessPiece*>& blackPieces, bool isBlackOnTop)
 {
     int xTexture{ 16 };
     int yTexture{ 16 };
@@ -90,16 +95,21 @@ void initializeBlackPieces(std::vector<chessPiece*>& blackPieces)
         }
         blackPieces[i]->getSprite().setScale(6.25, 6.25);
     }
+
+    if (isBlackOnTop)
+        setTopInitialPosition(blackPieces);
+    else
+        setBottomInitialPosition(blackPieces);
 }
 
-void setBottomInitialPosition(std::vector<chessPiece*>& whitePieces)
+void setBottomInitialPosition(std::vector<chessPiece*>& Pieces)
 {
     sf::Vector2f boardPosition{ 0.f + origin.x, 700.f };
     float sizeOfSquare{ 100.f };
     bool isInTop{ false };
-    for (size_t i = 0; i < whitePieces.size(); i++)
+    for (size_t i = 0; i < Pieces.size(); i++)
     {
-        whitePieces[i]->setPosition(boardPosition);
+        Pieces[i]->setPosition(boardPosition);
         if (i < 7)
             boardPosition.x += sizeOfSquare;
         if (i == 7)
@@ -107,18 +117,18 @@ void setBottomInitialPosition(std::vector<chessPiece*>& whitePieces)
         if (i > 7)
             boardPosition.x -= sizeOfSquare;
 
-        setThePossibleMoves(*whitePieces[i], isInTop);
+        setThePossibleMoves(*Pieces[i], isInTop);
     }
 }
 
-void setTopInitialPosition(std::vector<chessPiece*>& blackPieces)
+void setTopInitialPosition(std::vector<chessPiece*>& Pieces)
 {
     sf::Vector2f boardPosition{ 0.f + origin.x, 0.f };
     float sizeOfSquare{ 100.f };
     bool isInTop{ true };
-    for (size_t i = 0; i < blackPieces.size(); i++)
+    for (size_t i = 0; i < Pieces.size(); i++)
     {
-        blackPieces[i]->setPosition(boardPosition);
+        Pieces[i]->setPosition(boardPosition);
         if (i < 7)
             boardPosition.x += sizeOfSquare;
         if (i == 7)
@@ -126,6 +136,6 @@ void setTopInitialPosition(std::vector<chessPiece*>& blackPieces)
         if (i > 7)
             boardPosition.x -= sizeOfSquare;
 
-        setThePossibleMoves(*blackPieces[i], isInTop);
+        setThePossibleMoves(*Pieces[i], isInTop);
     }
 }

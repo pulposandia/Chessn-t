@@ -30,6 +30,9 @@
     <ClCompile Include="pieceInitialization.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="title screen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Draw chess board.h">
@@ -45,6 +48,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="icon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="title screen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
