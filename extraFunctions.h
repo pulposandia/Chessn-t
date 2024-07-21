@@ -17,6 +17,8 @@ void setThePossibleMoves(chessPiece& x, bool isInTop);
 
 bool HasbeenClicked(chessPiece& piece, sf::RenderWindow& window);
 
+void flipWhoseCurrentTurn(coloring& currentTurn);
+
 
 
 #endif // !EXTRAFUCNTIONS_H

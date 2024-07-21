@@ -100,5 +100,14 @@ bool HasbeenClicked(chessPiece& piece, sf::RenderWindow& window)
 	return piece.getSquare().contains(static_cast<sf::Vector2f>(sf::Mouse::getPosition(window))) && !piece.hasBeenCapture();
 }
 
+//serves to flip the variable current turn from one color to the other when this function is called
+void flipWhoseCurrentTurn(coloring& currentTurn)
+{
+	if (currentTurn == white)
+		currentTurn = black;
+	else if (currentTurn == black)
+		currentTurn = white;
+}
+
 
 

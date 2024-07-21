@@ -83,8 +83,8 @@ int main()
     allPieces.insert(allPieces.end(), whitePieces.begin(), whitePieces.end());
     allPieces.insert(allPieces.end(), blackPieces.begin(), blackPieces.end());
  
-
-    int counter{};
+    //varialbe holds memory of whose turn currently is
+    coloring currentTurn{ white };
     bool isShowingMoves{ false };
     piece type{};
     coloring color{};
@@ -117,6 +117,7 @@ int main()
                             if (type == allPieces[i]->getPieceType() && color == allPieces[i]->getColor())
                             {
                                 allPieces[i]->setPosition(newPosition, allPieces);
+                                flipWhoseCurrentTurn(currentTurn);
                                 break;
                             }
                         }
@@ -127,7 +128,7 @@ int main()
                 else
                     for (size_t i = 0; i < allPieces.size(); i++)
                     {
-                        if (HasbeenClicked(*allPieces[i], window))
+                        if (currentTurn == allPieces[i]->getColor() && HasbeenClicked(*allPieces[i], window))
                         {
                             std::cout << "It works!\n";
                             allPieces[i]->getAreasOfPMoves(possibleMoves, allPieces);
