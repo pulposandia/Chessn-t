@@ -109,5 +109,3 @@ void flipWhoseCurrentTurn(coloring& currentTurn)
 		currentTurn = white;
 }
 
-
-

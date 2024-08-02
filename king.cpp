@@ -30,6 +30,9 @@ void chessPiece::setPosition(sf::Vector2f& position, std::vector<chessPiece*>& p
 
 	if (!m_hasAlreadyMove) //if moved my the user for this first time record it with this bool
 		m_hasAlreadyMove = !m_hasAlreadyMove;
+
+	if (checkingTheKing(pieces))
+		std::cout << "It is checking the king\n";
 }
 
 //returns bool after checking if the given move falls on top of another piece
@@ -44,6 +47,14 @@ Helicopter chessPiece::isOnAnotherPiece(std::vector<chessPiece*>& pieces, sf::Ve
 	}
 
 	return {false, 0};
+}
+
+bool chessPiece::checkingTheKing(std::vector<chessPiece*>& pieces)
+{
+	if (m_type == BishopL || m_type == BishopR)
+		for (size_t j = 0; j < m_validMoves.size(); j++)
+			return (isAnyPieceOnTheWay(m_validMoves[j], pieces, true));
+	return false;
 }
 
 void chessPiece::firstMovePawn(std::vector<sf::FloatRect>& thePosibleMoves, std::vector<chessPiece*>& pieces)
@@ -73,7 +84,7 @@ void chessPiece::addPawnEatings(std::vector<sf::FloatRect>& thePosibleMoves, std
 	}
 }
 
-bool chessPiece::isAnyPieceOnTheWay(sf::Vector2f& direction, std::vector<chessPiece*>& pieces, bool isIgnoringKing)
+bool chessPiece::isAnyPieceOnTheWay(sf::Vector2f& direction, std::vector<chessPiece*>& pieces, bool isLookingForCheck)
 {
 	sf::Vector2f nextSquare{};
 	//loops until it finds any piece but a king in the way and returns true
@@ -88,14 +99,13 @@ bool chessPiece::isAnyPieceOnTheWay(sf::Vector2f& direction, std::vector<chessPi
 		//if there is another piece that is protecting the king then allow this* piece to move freely
 		if (variable.booleant && (pieces[variable.index]->getPieceType() != King)) //the "is king" check might be dropped later
 			return true;
-		//if this function is used in context of moving a piece that is protecting the king then stop the loop after encountering the king
-		if ((pieces[variable.index]->getPieceType() == King) && !isIgnoringKing)
+		//if we find the king we send a false booleant (cannot move this piece cause its protecting the king)
+		if (pieces[variable.index]->getPieceType() == King && pieces[variable.index]->getColor() == m_color)
 			return false;
 	}
-
-	return false;
+	//when we use this fucntion to look for checks to the king we need this to return true, otherwise the already false bool will return
+	return isLookingForCheck;
 }
-
 
 bool chessPiece::isDangerOnTheWay(sf::Vector2f& dangersDirection, std::vector<chessPiece*>& pieces, sf::Vector2f& initialPosition)
 {
@@ -156,7 +166,6 @@ protectingKing& chessPiece::protectingKingFrom(std::vector<chessPiece*>& pieces)
 			vectorPieceKing.y /= abs(vectorPieceKing.y);
 	
 		dangersDirection.direction = vectorPieceKing * -1.f;  //flips it so now the vector is looking from the king to the piece
-		sf::Vector2f nextSquare{};
 
 		//loop to check if the king is alredy protected with another piece
 		if (isAnyPieceOnTheWay(vectorPieceKing, pieces))
@@ -196,9 +205,9 @@ void chessPiece::getAreasOfPMoves(std::vector<sf::FloatRect>& x, std::vector<che
 		// if the piece is protecting the king from check then do not allow that piece to move away and leave the king unprotected
 		if (isProtectingKing.booleant && (m_validMoves[j] != isProtectingKing.direction))
 		{
-			if (m_type >= 8)
+			if (m_type >= 8) // if this* piece is a pawn we cannot move it
 				break;
-			continue;
+			continue; //skipped the rest of the moves that will leave the king unprotected
 		}
 		for (float i{ 1.f }; i <= m_maxDistance; i++)
 		{

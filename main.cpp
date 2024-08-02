@@ -62,6 +62,9 @@ int main()
     chessPiece peon7B(Pawn7, piesas, 1.f, black);
     chessPiece peon8B(Pawn8, piesas, 1.f, black);
 
+    //special extra piece used with some fucntions
+    chessPiece dummyPiece(Pawn8, piesas, 1.f, black);
+
     bool whiteIsInTop{ false };
     bool blackIsInTop{ false };
     displayTitleScreen(window, whiteIsInTop, blackIsInTop); //displays a select screen to choose color 
@@ -82,6 +85,7 @@ int main()
     allPieces.reserve(whitePieces.size() + blackPieces.size());
     allPieces.insert(allPieces.end(), whitePieces.begin(), whitePieces.end());
     allPieces.insert(allPieces.end(), blackPieces.begin(), blackPieces.end());
+    allPieces.push_back(&dummyPiece);
  
     //varialbe holds memory of whose turn currently is
     coloring currentTurn{ white };
@@ -112,7 +116,7 @@ int main()
                         std::cout << "awebo\n";
                         sf::Vector2f newPosition{ possibleMoves[isRomboCliked.index].getPosition() };
                         //loops thru all pieces and finds the piece the user clicked last and moves it
-                        for (size_t i = 0; i < allPieces.size(); i++)
+                        for (size_t i = 0; i < allPieces.size() -1 ; i++)
                         {
                             if (type == allPieces[i]->getPieceType() && color == allPieces[i]->getColor())
                             {
@@ -126,7 +130,7 @@ int main()
                 }
                 // if not currently showing moves check what piece has been cliked and change variables so next frame the piece's moves will be shown
                 else
-                    for (size_t i = 0; i < allPieces.size(); i++)
+                    for (size_t i = 0; i < allPieces.size() -1 ; i++)
                     {
                         if (currentTurn == allPieces[i]->getColor() && HasbeenClicked(*allPieces[i], window))
                         {
@@ -142,11 +146,12 @@ int main()
                     }
             }
         }
+
         //draws all pieces that havent been captured yet
-        for (auto var : allPieces)
+        for (size_t i = 0 ; i < allPieces.size() -1; ++i)
         {
-            if (!var->hasBeenCapture())
-                window.draw(var->getSprite());
+            if (!allPieces[i]->hasBeenCapture())
+                window.draw(allPieces[i]->getSprite());
         }
         //keeps drawing possible moves while users decides what to do
         if (isShowingMoves)
